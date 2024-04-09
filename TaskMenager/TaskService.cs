@@ -46,29 +46,6 @@ namespace TaskMenager
             {   
                     SelectedTask.Add(element);
             }
-            int count = 0;
-            int first = -1;
-            for(int i = 0; i < SelectedTask.Count; i++)
-            {
-                
-                foreach(Task task in SelectedTask)
-                {
-                    if (task.Id == SelectedTask[i].Id)
-                    {
-                        count++;
-                        if (count == 1)
-                        {
-                            first = task.Id;
-                        }
-                        if (count >= 2)
-                        {
-                            SelectedTask.RemoveAt(first-1);
-                            break;
-                        }
-                    }
-                }
-               
-            }
             return SelectedTask;
         }
         public void RemoveTask(int RemoveId)

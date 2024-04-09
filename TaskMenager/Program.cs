@@ -12,7 +12,8 @@ public class Program
         TaskService taskService = new TaskService();
         Console.WriteLine("Welcome to TaskMenager!!");
         bool IsContinue = true;
-        List<Task> task = new List<Task>();
+        bool Success;
+        var task = new List<Task>();
         while (IsContinue == true)
         {
             Console.WriteLine("Select below what you wanna do.");
@@ -22,13 +23,13 @@ public class Program
                 Console.WriteLine($"{MainMenu[i].Name}");
             }
             var MainOperation = Console.ReadLine();
-                switch (MainOperation)
+            switch (MainOperation)
             {
                 case "1":
                     Console.WriteLine("Insert task id:");
                     var _TaskId = Console.ReadLine();
                     int TaskId;
-                    bool Success = int.TryParse(_TaskId, out TaskId);
+                    Success = int.TryParse(_TaskId, out TaskId);
                     if (Success == true)
                     {
                         Console.WriteLine("Insert task name:");
@@ -50,7 +51,8 @@ public class Program
                         if (_TaskCategory < 4 && _TaskCategory > 0)
                         {
                             Console.WriteLine($"You created new task named {TaskName}");
-                            taskService.AddNewTask(TaskId, TaskName, TaskDescription, TaskDeadline, TaskCategory);
+                            task.Add(taskService.AddNewTask(TaskId, TaskName, TaskDescription, TaskDeadline, TaskCategory));
+                            
                         }
                         else
                         {
@@ -63,98 +65,114 @@ public class Program
                     }
                     break;
                 case "2":
-                    task = taskService.AllTasks();
-                    Console.WriteLine("----------------------------------");
-                    for(int i = 0;i < task.Count;i++)
+                    for (int i = 0;i < task.Count;i++)
                     {
-                        Console.WriteLine($"{task[i].Id}.{task[i].Name}");
+                        Console.WriteLine(task[i].Id + task[i].Name);
                     }
-                    Console.WriteLine("Insert id of the task you want to see:");
-                    string __TaskIdOperation = Console.ReadLine();
-                    int TaskIdOperation;
-                    int.TryParse(__TaskIdOperation, out TaskIdOperation);
-                    int index = 0;
-                    foreach (Task element in task)
+                    Console.WriteLine("Select task by inserting task id:");
+                    string _TaskIdView = Console.ReadLine();
+                    int TaskIdView;
+                    Success = int.TryParse(_TaskIdView, out TaskIdView);
+                    if(Success == true)
                     {
-                        if (element.Id == TaskIdOperation)
+                        Console.WriteLine("What you wanna do with this task?");
+                        var OpperationList = actionsService.GetMenuActionByMenuName("Opperation");
+                        for(int i = 0;i < OpperationList.Count;i++)
                         {
-                            Console.WriteLine($"Id-{task[index].Id}, Name-{task[index].Name}, Description-{task[index].Description} , Deadline-{task[index].Deadline}, Category-{task[index].Category}");
-                            Console.WriteLine("What you wanna do? Select operation below.");
-                            var Opperation = actionsService.GetMenuActionByMenuName("Opperation");
-                            for (int i = 0; i < Opperation.Count; i++)
+                            Console.WriteLine(OpperationList[i].Name);
+                        }
+                        string _Opperation = Console.ReadLine();
+                        int Opperation;
+                        Success = int.TryParse(_Opperation, out Opperation);
+                        if(Success == true)
+                        {
+                            Console.WriteLine("What you wanna edit?");
+                            var EditList = actionsService.GetMenuActionByMenuName("Edit");
+                            for(int i = 0;i < EditList.Count;i++)
                             {
-                                Console.WriteLine($"{Opperation[i].Name}");
+                                Console.WriteLine($"{EditList[i].Name}");
                             }
-                            string _TaskOperation = Console.ReadLine();
-                            int TaskOperation;
-                            int.TryParse(_TaskOperation, out TaskOperation);
-                            switch (TaskOperation)
+                            string _EditChoose = Console.ReadLine();
+                            int EditChoose;
+                            Success = int.TryParse(_EditChoose, out EditChoose);
+                            if(Success == true)
                             {
-                                case 1:
-                                    Console.WriteLine("What you wanna edit?");
-                                    var edit = actionsService.GetMenuActionByMenuName("Edit");
-                                    for (int i = 0; i < edit.Count; i++)
-                                    {
-                                        Console.WriteLine($"{edit[i].Name}");
-                                    }
-                                    string _TaskElement = Console.ReadLine();
-                                    int TaskElement;
-                                    int.TryParse(_TaskElement, out TaskElement);
-                                    string NewData;
-                                    int _NewData;
-                                    switch (TaskElement)
-                                    {
-                                        case 1:
-                                            Console.WriteLine("Insert new Id:");
-                                            NewData = Console.ReadLine();
-                                            int.TryParse(NewData, out _NewData);
-                                            task[index].Id = _NewData;
-                                            break;
-                                        case 2:
-                                            Console.WriteLine("Insert new Name:");
-                                            NewData = Console.ReadLine();
-                                            task[index].Name = NewData;
-                                            break;
-                                        case 3:
-                                            Console.WriteLine("Insert new Description:");
-                                            NewData = Console.ReadLine();
-                                            task[index].Description = NewData;
-                                            break;
-                                        case 4:
-                                            Console.WriteLine("Insert new Deadline(HH:MM/DD/MM/YYYY):");
-                                            NewData = Console.ReadLine();
-                                            task[index].Deadline = NewData;
-                                            break;
-                                        case 5:
-                                            Console.WriteLine("Select new category:");
-                                            var Category = actionsService.GetMenuActionByMenuName("Category");
-                                            for (int i = 0; i < Category.Count; i++)
-                                            {
-                                                Console.WriteLine($"{Category[i].Name}");
-                                            }
-                                            NewData = Console.ReadLine();
-                                            int.TryParse(NewData, out _NewData);
-                                            task[index].Category = TaskService.NumberToCategory(_NewData);
-                                            break;
-                                    }
-                                    break;
-                                case 2:
-                                    Console.WriteLine($"Are you sure that you want delete task named {task[index].Name}? Y/N");
-                                    var DeleteDecision = Console.ReadKey();
-                                    switch (DeleteDecision.KeyChar)
-                                    {
-                                        case 'Y':
-                                            taskService.RemoveTask(index);
-                                            break;
-                                    }
-                                    break;
+                                switch (EditChoose)
+                                {
+                                    case 1:
+                                        Console.WriteLine("Insert new Id");
+                                        string _NewId = Console.ReadLine();
+                                        int NewId;
+                                        Success = int.TryParse(_NewId, out NewId);
+                                        if(Success == true)
+                                        {
+                                            task[TaskIdView].Id = NewId;
+                                            Console.WriteLine("New id was succesful updated.");
+                                        }
+                                        break;
+                                    case 2:
+                                        Console.WriteLine("Insert new Name");
+                                        string NewName = Console.ReadLine();
+                                        if (Success == true)
+                                        {
+                                            task[TaskIdView].Name = NewName;
+                                            Console.WriteLine("New name was succesful updated.");
+                                        }
+                                        break;
+                                    case 3:
+                                        Console.WriteLine("Insert new Description");
+                                        string NewDescription= Console.ReadLine();
+                                        if (Success == true)
+                                        {
+                                            task[TaskIdView].Description = NewDescription;
+                                            Console.WriteLine("New description was succesful updated.");
+                                        }
+                                        break;
+                                    case 4:
+                                        Console.WriteLine("Insert new Deadline");
+                                        string NewDeadline = Console.ReadLine();
+                                        if (Success == true)
+                                        {
+                                            task[TaskIdView].Deadline = NewDeadline;
+                                            Console.WriteLine("New Deadline was succesful updated.");
+                                        }
+                                        break;
+                                    case 5:
+                                        Console.WriteLine("insert new category:");
+                                        var NewCategoryView = actionsService.GetMenuActionByMenuName("Category");
+                                        for(int i = 0; i < NewCategoryView.Count;i++)
+                                        {
+                                            Console.WriteLine(NewCategoryView[i].Name);
+                                        }
+                                        string _NewCategory = Console.ReadLine();
+                                        int NewCategory;
+                                        int.TryParse(_NewCategory, out NewCategory);
+                                        switch(NewCategory) 
+                                        {
+                                            case 1:
+                                                task[TaskIdView].Category = "Home";
+                                                Console.WriteLine("New Category was succesful updated.");
+                                                break;
+                                            case 2:
+                                                task[TaskIdView].Category = "Job";
+                                                Console.WriteLine("New Category was succesful updated.");
+                                                break;
+                                            case 3:
+                                                task[TaskIdView].Category = "Hobby";
+                                                Console.WriteLine("New Category was succesful updated.");
+                                                break;
+                                            default:
+                                                Console.WriteLine("Wrong category id!!");
+                                                break;
+                                        }
+                                        break;
+                                    default:
+                                        Console.WriteLine("Wrong element id!!!");
+                                        break;
+                                }
                             }
                         }
-                    index++;
                     }
-                    
-                        
-                    
                     break;
                 case "3":
                     Console.WriteLine("Goodbye!");
