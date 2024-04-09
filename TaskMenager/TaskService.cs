@@ -32,9 +32,16 @@ namespace TaskMenager
             return category;
         }
         private List<Task> tasks= new List<Task>();
-        public Task AddNewTask(int id, string name, string description,string deadline, string category)
+        public Task AddNewTask(string name, string description,string deadline, string category)
         {
-            Task task = new Task() { Id = id, Name = name, Description = description,Deadline = deadline,Category = category };
+            int tasksCount = tasks.Count;
+            int lastId = 0;
+            if (tasksCount > 0)
+            {
+                lastId = tasks[tasksCount - 1].Id;
+            }
+            int nextId = lastId + 1;
+            Task task = new Task() { Id = nextId, Name = name, Description = description,Deadline = deadline,Category = category };
             tasks.Add(task);
             return task;
         }
